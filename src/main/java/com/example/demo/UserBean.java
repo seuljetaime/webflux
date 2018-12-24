@@ -31,4 +31,12 @@ public class UserBean {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+
+    public void sleep() {
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

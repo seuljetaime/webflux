@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,8 @@ public class UserHandler {
 
     private List<UserBean> userList;
 
+    private UserBean user1;
+
     /**
      * 初始化数据
      */
@@ -22,7 +25,7 @@ public class UserHandler {
     public void init() {
         userList = new ArrayList<>();
 
-        UserBean user1 = new UserBean();
+        user1 = new UserBean();
         user1.setId(1);
         user1.setUsername("admin");
         user1.setNickname("管理员");
@@ -42,10 +45,22 @@ public class UserHandler {
      * @param request
      * @return
      */
-    public Mono<ServerResponse> getUserList(ServerRequest request) {
+    public Mono<ServerResponse> getUser(ServerRequest request) {
+        System.out.println("线程信息： " + Thread.currentThread().getName() + " " + Thread.currentThread().getId());
+//        Mono<UserBean> um = Mono.just(getUserBean());
+        Mono<UserBean> um = Mono.just(getUserBean()).delayElement(Duration.ofMillis(10000));
+        System.out.println("线程已执行： " + Thread.currentThread().getName());
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .body(Mono.just(userList), List.class);
+                .body(um, UserBean.class);
+    }
+
+    private UserBean getUserBean() {
+        long l = 100 * 100000000L;
+        while (l > 0) {
+            l--;
+        }
+        return user1;
     }
 
 }
