@@ -9,6 +9,7 @@ public class ApiController {
 
     @GetMapping("/test")
     public Mono<String> hello() {
+        System.out.println("test线程信息： " + Thread.currentThread().getName() + " " + Thread.currentThread().getId());
         return Mono.just("Hello World");
     }
 
