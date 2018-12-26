@@ -50,12 +50,18 @@ public class UserHandler {
      */
     public Mono<ServerResponse> getUser(ServerRequest request) {
         System.out.println("线程信息： " + Thread.currentThread().getName() + " " + Thread.currentThread().getId());
-//        Mono<UserBean> um = Mono.just(user1);
+
+        ThreadLocal threadLocal = new ThreadLocal();
+        threadLocal.set("123");
+
+        System.out.println("threadlocal" + threadLocal.get());
 //        Mono<UserBean> um = Mono.just(getUserBean()).delayElement(Duration.ofMillis(10000));
 //        System.out.println("线程已执行： " + Thread.currentThread().getName());
 
         Flux<UserBean> uf = Flux.fromIterable(userList)
                 .map(k -> whileU(k));
+
+        Mono<UserBean> um = Mono.just(user1);
 
 
         return ServerResponse.ok()
