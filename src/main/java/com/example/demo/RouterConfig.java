@@ -17,6 +17,6 @@ public class RouterConfig {
 
     @Bean
     public RouterFunction<ServerResponse> userRouter() {
-        return route(GET("/user"), req -> userHandler.getUser(req));
+        return route(GET("/user/{id}"), req -> userHandler.getUser(req));
     }
 }

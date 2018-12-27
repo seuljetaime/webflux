@@ -1,21 +1,24 @@
 package com.example.demo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.PostConstruct;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class UserHandler {
+
+    private Logger logger = LoggerFactory.getLogger(UserHandler.class);
 
     private List<UserBean> userList;
 
@@ -43,46 +46,35 @@ public class UserHandler {
     }
 
     /**
-     * 获取用户列表
+     * 获取用户
      *
      * @param request
      * @return
      */
     public Mono<ServerResponse> getUser(ServerRequest request) {
-        System.out.println("线程信息： " + Thread.currentThread().getName() + " " + Thread.currentThread().getId());
-
-        ThreadLocal threadLocal = new ThreadLocal();
-        threadLocal.set("123");
-
-        System.out.println("threadlocal" + threadLocal.get());
-//        Mono<UserBean> um = Mono.just(getUserBean()).delayElement(Duration.ofMillis(10000));
-//        System.out.println("线程已执行： " + Thread.currentThread().getName());
+        logger.info("path:" + request.path() + " thread info:" + Thread.currentThread().getName());
 
         Flux<UserBean> uf = Flux.fromIterable(userList)
-                .map(k -> whileU(k));
+                .publishOn(Schedulers.elastic())
+                .map(k -> userSleep(k));
 
         Mono<UserBean> um = Mono.just(user1);
-
+        logger.info("mono已执行");
 
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .body(uf, UserBean.class);
-
-
     }
 
-    private UserBean whileU(UserBean u) {
-        System.out.println("while线程信息： " + Thread.currentThread().getName() + " " + Thread.currentThread().getId());
-        long l = 100 * 100000000L;
-        while (l > 0) {
-            l--;
+    private UserBean userSleep(UserBean u) {
+        logger.info("sleep信息： " + Thread.currentThread().getName());
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        logger.info("sleep返回");
         return user1;
     }
-
-    public static void main(String[] args) {
-        System.out.println(Runtime.getRuntime().availableProcessors());
-    }
-
 
 }

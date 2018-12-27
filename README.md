@@ -6,7 +6,11 @@
 
 [【Netty】EventLoop和线程模型](https://www.cnblogs.com/leesf456/p/6902636.html)
 
-# 线程模型
+[响应式Spring的道法术器（Spring WebFlux 快速上手 + 全面介绍）](http://blog.51cto.com/liukang/2090163)
+
+[spring webflux（二）](https://www.jianshu.com/p/dcfc640c16e8)
+
+# 常见线程模型
 
 转载自`http://www.cnblogs.com/leesf456/p/6902636.html`
 
@@ -22,7 +26,12 @@
 
 > 池化和复用线程是针对每个任务都需要创建和销毁线程的改进，但还是需要进行上下文切换，并且随着线程数量的增加，其负担也会增加。同时，在高并发下也会出现很多线程问题。
 
+**举例一个常见场景：**
 
+1. 当请求发送到tomcat时，tomcat从线程池获取一个线程分配给该请求。 该线程可能是新建的，也可能是复用已存在的。引入线程池是不想频繁地创建、销毁线程，造成不必要的消耗。
+2. 新增线程会增加内存。如果已达最大线程，则后来的请求将无法处理。
+3. 请求会在线程中执行，spring事务信息存储在ThreadLocal中
+4. 处理完后，tomcat线程返回线程池进行管理
 
 ## **内存**
 
@@ -54,6 +63,8 @@ JVM每个线程都需占用内存，可以通过`java -XX:+PrintFlagsFinal -vers
 
 >　　每个通道将会分配一个EventLoop（以及相关线程），Channel的IO事件将由独立的线程处理。
 
+**举例一个常用常见：**
+
 # 响应式编程
 
 搜索响应式编程，可以看到有篇经常被转载的文章，文章是前端的响应式。
@@ -63,6 +74,12 @@ JVM每个线程都需占用内存，可以通过`java -XX:+PrintFlagsFinal -vers
 中文译文：[响应式编程，是明智的选择](https://juejin.im/entry/5a4313ef5188255de57e0a18)  或者搜索`响应式编程`
 
 ## 介绍
+
+Reactive programming is programming with asynchronous data streams.
+
+响应式编程就是与异步数据流交互的编程范式
+
+
 
 
 
@@ -136,8 +153,4 @@ controller注解、Router
 
 ## 需注意的地方
 
-
-
-
-
-https://juejin.im/post/5bb6f41ce51d450e6b0e0327)
+1. jdbc还不支持响应式，连接数据库需要额外开线程，或者线程池去获取数据
