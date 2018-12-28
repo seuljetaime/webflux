@@ -10,20 +10,23 @@
 
 [spring webflux（二）](https://www.jianshu.com/p/dcfc640c16e8)
 
+[Netty线程模型及EventLoop详解](https://www.jianshu.com/p/128ddc36e713)
+
+
 # 常见线程模型
 
 转载自`http://www.cnblogs.com/leesf456/p/6902636.html`
 
 > 线程池可通过缓存和复用已有线程来提高系统性能，基本的缓冲池模式可描述如下：
-
->　　　　· 从池中空闲链表中选取线程，然后将其分配赋予给已提交的任务。
-
->　　　　· 当线程完成工作时，该线程又返回至空闲链表，可再进行复用。
-
->　　该模式如下图所示。
-
->　　![img](./docs/assets/thread_model.png)
-
+>
+> 　　　　· 从池中空闲链表中选取线程，然后将其分配赋予给已提交的任务。
+>
+> 　　　　· 当线程完成工作时，该线程又返回至空闲链表，可再进行复用。
+>
+> 　　该模式如下图所示。
+>
+> 　　![img](./docs/assets/thread_model.png)
+>
 > 池化和复用线程是针对每个任务都需要创建和销毁线程的改进，但还是需要进行上下文切换，并且随着线程数量的增加，其负担也会增加。同时，在高并发下也会出现很多线程问题。
 
 **举例一个常见场景：**
@@ -45,60 +48,47 @@ JVM每个线程都需占用内存，可以通过`java -XX:+PrintFlagsFinal -vers
 
 那么线程越多，占用内存就越多。另外线程间不停切换，也耗时。
 
+
+
 # Netty EventLoop
 
 转载自`http://www.cnblogs.com/leesf456/p/6902636.html
 
 > 为通道的I/O和事件提供服务的EventLoops包含在EventLoopGroup，EventLoops创建和分配的方式根据传输实现（异步和阻塞）而有所不同。
-
+>
 > **· 异步传输**。只使用少量的EventLoopGroup，在当前的模型中其在通道中共享。这允许通道由最小数量的线程提供服务，而不是为每个通道分配一个线程。下图展示了包含三个EventLoop（每个EventLoop由一个线程驱动）的EventLoopGroup，EventLoopGroup创建时会直接分配EventLoops（及其线程），以确保它们在需要时可用，EventLoopGroup负责将EventLoop分配给每个新创建的通道，当前的实现是使用循环方法实现均衡分配，**相同的EventLoop可被分配给多个通道**。
+>
+> 　　![img](/docs/assets/eventloop_nio.png)
+>
+> 　　一旦一个Channel被分配了一个EventLoop，它将在其生命周期中一直使用这个EventLoop（和相关联的线程）。同时请注意EventLoop的分配对ThreadLocal影响，因为一个EventLoop通常驱动多个通道，多个通道的ThreadLocal也相同。
+>
+> 　　**· 阻塞传输。**OIO的实现与异步传输的实现大不相同，其如下图所示。
+>
+> 　　![img](./docs/assets/eventloop_oio.png)
+>
+> 　　每个通道将会分配一个EventLoop（以及相关线程），Channel的IO事件将由独立的线程处理。
 
->　　![img](/docs/assets/eventloop_nio.png)
 
->　　一旦一个Channel被分配了一个EventLoop，它将在其生命周期中一直使用这个EventLoop（和相关联的线程）。同时请注意EventLoop的分配对ThreadLocal影响，因为一个EventLoop通常驱动多个通道，多个通道的ThreadLocal也相同。
 
->　　**· 阻塞传输。**OIO的实现与异步传输的实现大不相同，其如下图所示。
+## 其他参考：
 
->　　![img](./docs/assets/eventloop_oio.png)
+[Netty线程模型及EventLoop详解](https://www.jianshu.com/p/128ddc36e713) 这篇文章需要获取转载授权，没有将文章内容复制在此，请自行查阅。
 
->　　每个通道将会分配一个EventLoop（以及相关线程），Channel的IO事件将由独立的线程处理。
 
-**举例一个常用常见：**
 
 # 响应式编程
 
-搜索响应式编程，可以看到有篇经常被转载的文章，文章是前端的响应式。
+**Reactive programming is programming with asynchronous data streams.**
+
+**响应式编程就是与异步数据流交互的编程范式**
+
+
+
+搜索响应式编程，可以看到有篇经常被转载的文章，文章是前端的响应式。内容较长，请见链接。
 
 英文原文: [The introduction to Reactive Programming you've been missing](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754)
 
 中文译文：[响应式编程，是明智的选择](https://juejin.im/entry/5a4313ef5188255de57e0a18)  或者搜索`响应式编程`
-
-## 介绍
-
-Reactive programming is programming with asynchronous data streams.
-
-响应式编程就是与异步数据流交互的编程范式
-
-
-
-
-
-关于响应式打个比方，比如在Java中，有如下赋值
-
-```
-Integer a = 1;
-Integer b = 2;
-Integer c = a + b;
-
-b = 5;
-System.out.println("c is: " + c);
-```
-
-输出c is: 3
-
-在Excel表格中，如果设置C1单元格的值为=A1+B1，那么修改A1的值时，C1的值也会变化。
-
-
 
 
 
