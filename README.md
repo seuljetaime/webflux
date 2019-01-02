@@ -2,13 +2,13 @@
 
 [朱晔和你聊Spring系列S1E5：Spring WebFlux小探](https://juejin.im/post/5bb6f41ce51d450e6b0e0327)
 
-[Netty 源码分析之 三 我就是大名鼎鼎的 EventLoop(一)](https://segmentfault.com/a/1190000007403873)
-
-[【Netty】EventLoop和线程模型](https://www.cnblogs.com/leesf456/p/6902636.html)
-
 [响应式Spring的道法术器（Spring WebFlux 快速上手 + 全面介绍）](http://blog.51cto.com/liukang/2090163)
 
 [spring webflux（二）](https://www.jianshu.com/p/dcfc640c16e8)
+
+[Netty 源码分析之 三 我就是大名鼎鼎的 EventLoop(一)](https://segmentfault.com/a/1190000007403873)
+
+[【Netty】EventLoop和线程模型](https://www.cnblogs.com/leesf456/p/6902636.html)
 
 [Netty线程模型及EventLoop详解](https://www.jianshu.com/p/128ddc36e713)
 
@@ -32,9 +32,9 @@
 **举例一个常见场景：**
 
 1. 当请求发送到tomcat时，tomcat从线程池获取一个线程分配给该请求。 该线程可能是新建的，也可能是复用已存在的。引入线程池是不想频繁地创建、销毁线程，造成不必要的消耗。
-2. 新增线程会增加内存。如果已达最大线程，则后来的请求将无法处理。
-3. 请求会在线程中执行，spring事务信息存储在ThreadLocal中
-4. 处理完后，tomcat线程返回线程池进行管理
+2. 新增线程会增加内存。如果已达最大线程，则后来的请求将无法处理。当线程越多时，CPU进行上下文切换需要更多的开销，这些切换不是在处理业务。
+3. 一个请求会在一个线程中执行，spring事务信息存储在ThreadLocal中
+4. 请求处理完后，线程返回线程池进行管理
 
 ## **内存**
 
@@ -73,6 +73,14 @@ JVM每个线程都需占用内存，可以通过`java -XX:+PrintFlagsFinal -vers
 ## 其他参考：
 
 [Netty线程模型及EventLoop详解](https://www.jianshu.com/p/128ddc36e713) 这篇文章需要获取转载授权，没有将文章内容复制在此，请自行查阅。
+
+另外还有一个源码分析系列，比较多，也请自行查阅。[Netty 源码分析之 三 我就是大名鼎鼎的 EventLoop(一)](https://segmentfault.com/a/1190000007403873)
+
+
+
+大致可以将Netty EventLoop理解为：
+
+1. 
 
 
 
