@@ -74,13 +74,7 @@ JVM每个线程都需占用内存，可以通过`java -XX:+PrintFlagsFinal -vers
 
 [Netty线程模型及EventLoop详解](https://www.jianshu.com/p/128ddc36e713) 这篇文章需要获取转载授权，没有将文章内容复制在此，请自行查阅。
 
-另外还有一个源码分析系列，比较多，也请自行查阅。[Netty 源码分析之 三 我就是大名鼎鼎的 EventLoop(一)](https://segmentfault.com/a/1190000007403873)
-
-
-
-大致可以将Netty EventLoop理解为：
-
-1. 
+另外还有一个源码分析系列，比较多，也请自行查阅。[源码之下无秘密 ── 做最好的 Netty 源码分析教程](https://segmentfault.com/a/1190000007282628)
 
 
 
@@ -108,41 +102,25 @@ JVM每个线程都需占用内存，可以通过`java -XX:+PrintFlagsFinal -vers
 
 
 
-
-# 访问
-
-`application.yml`中没有配置端口，使用默认的8080
-
-`http://localhost:8080/test`
-
-`http://localhost:8080/users`
-
-
-
 # Spring WebFlux
 
 Spring Boot 2 基于Spring 5。Spring 5 引入了新的响应式框架WebFlux，功能层级与spring-mvc对等。
 
 > Spring reative Web框架，是5.0中的新功能，是一个完全的reactive并且非阻塞的web框架。它适合处理那种event-loop 风格的事情，也就是事件驱动的。它支持Servlet容器（Tomcat，Jetty，Servlet 3.1+），也支持非Servlet的运行时（比如：Netty，Undertow），因为它的基础不是Servlet API，而是构建在Reactive Streams和Reactor项目之上的。
 
-## WebClient
+
+
+## 适用性
+
+[官方说明](https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-framework-choice)
+
++ If you have a Spring MVC application that works fine, there is no need to change. Imperative programming is the easiest way to write, understand, and debug code. You have maximum choice of libraries, since, historically, most are blocking.
++ A simple way to evaluate an application is to check its dependencies. If you have blocking persistence APIs (JPA, JDBC) or networking APIs to use, Spring MVC is the best choice for common architectures at least. It is technically feasible with both Reactor and RxJava to perform blocking calls on a separate thread but you would not be making the most of a non-blocking web stack.
++ If you have a Spring MVC application with calls to remote services, try the reactive `WebClient`. You can return reactive types (Reactor, RxJava, [or other](https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html#webflux-reactive-libraries)) directly from Spring MVC controller methods. The greater the latency per call or the interdependency among calls, the more dramatic the benefits. Spring MVC controllers can call other reactive components too.
 
 
 
-## 与Spring MVC的对比
-
-
-
-## 支持的数据库
-
-
-
-## 两种方式
-
-controller注解、Router
-
-
-
+![适用性](./docs/assets/spring-mvc-and-webflux-venn.png)
 
 
 ## 关于性能
@@ -155,11 +133,24 @@ controller注解、Router
 
 
 
+## 并发模型
+
+[官方链接](https://docs.spring.io/spring/docs/5.0.6.RELEASE/spring-framework-reference/web-reactive.html#webflux-concurrency-model)
+
+In Spring WebFlux, and non-blocking servers in general, it is assumed that applications *will not block*, and therefore non-blocking servers use a small, fixed-size thread pool (event loop workers) to handle requests.
 
 
-## 需注意的地方
+## WebClient
 
-1. jdbc还不支持响应式，连接数据库需要额外开线程，或者线程池去获取数据
+
+
+## 支持的数据库
+
+
+
+## 两种方式
+
+controller注解、Router
 
 
 
@@ -174,3 +165,10 @@ controller注解、Router
 
 
 
+# 访问
+
+`application.yml`中没有配置端口，使用默认的8080
+
+`http://localhost:8080/test`
+
+`http://localhost:8080/users`
