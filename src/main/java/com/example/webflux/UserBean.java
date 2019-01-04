@@ -1,18 +1,21 @@
 package com.example.webflux;
 
+import org.springframework.data.annotation.Id;
+
 public class UserBean {
 
-    private Integer id;
+    @Id
+    private String id;
 
     private String username;
 
     private String nickname;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

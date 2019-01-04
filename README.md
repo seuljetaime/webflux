@@ -108,6 +108,9 @@ Spring Boot 2 基于Spring 5。Spring 5 引入了新的响应式框架WebFlux，
 
 > Spring reative Web框架，是5.0中的新功能，是一个完全的reactive并且非阻塞的web框架。它适合处理那种event-loop 风格的事情，也就是事件驱动的。它支持Servlet容器（Tomcat，Jetty，Servlet 3.1+），也支持非Servlet的运行时（比如：Netty，Undertow），因为它的基础不是Servlet API，而是构建在Reactive Streams和Reactor项目之上的。
 
+1. WebFlux基于响应式流，基于Reactor
+2. 可以提供异步非阻塞的服务
+
 
 
 ## 适用性
@@ -159,9 +162,22 @@ What threads should you expect to see on a server running with Spring WebFlux?
 
 
 
-## 两种方式
+## 编码的两种方式
 
-controller注解、Router
+1. 与Spring MVC 类似的注解
+2. Router函数式
+
+### WebFlux函数式开发
+
+代码请见项目中的`src\main\java\com\example\webflux\functional`，
+
+RouterConfig用于定义url与handeller的关系，xxxHandler是业务的处理逻辑代码
+
+
+
+mongodb使用默认配置
+
+
 
 
 

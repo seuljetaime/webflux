@@ -1,4 +1,4 @@
-package com.example.webflux;
+package com.example.webflux.functional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
@@ -17,6 +18,7 @@ public class RouterConfig {
 
     @Bean
     public RouterFunction<ServerResponse> userRouter() {
-        return route(GET("/user/{id}"), req -> userHandler.getUser(req));
+        return route(GET("/user/{id}"), req -> userHandler.getUser(req))
+                .andRoute(POST("/user"), req -> userHandler.saveUser(req));
     }
 }

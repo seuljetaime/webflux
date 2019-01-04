@@ -1,7 +1,9 @@
-package com.example.webflux;
+package com.example.webflux.functional;
 
+import com.example.webflux.UserBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -24,6 +26,9 @@ public class UserHandler {
 
     private UserBean user1;
 
+    @Autowired
+    private UserRepository userRepository;
+
     /**
      * 初始化数据
      */
@@ -32,17 +37,23 @@ public class UserHandler {
         userList = new ArrayList<>();
 
         user1 = new UserBean();
-        user1.setId(1);
+        user1.setId("1");
         user1.setUsername("admin");
         user1.setNickname("管理员");
 
         UserBean user2 = new UserBean();
-        user2.setId(2);
+        user2.setId("2");
         user2.setUsername("staff");
         user2.setNickname("职员");
 
         userList.add(user1);
         userList.add(user2);
+    }
+
+    public Mono<ServerResponse> saveUser(ServerRequest request) {
+        return request.bodyToMono(UserBean.class)
+                .map(u -> userRepository.save(u))
+                .flatMap(c -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(c, UserBean.class));
     }
 
     /**
