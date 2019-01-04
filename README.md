@@ -140,6 +140,17 @@ Spring Boot 2 基于Spring 5。Spring 5 引入了新的响应式框架WebFlux，
 In Spring WebFlux, and non-blocking servers in general, it is assumed that applications *will not block*, and therefore non-blocking servers use a small, fixed-size thread pool (event loop workers) to handle requests.
 
 
+
+*Threading Model*
+
+What threads should you expect to see on a server running with Spring WebFlux?
+
+- On a "vanilla" Spring WebFlux server (e.g. no data access, nor other optional dependencies), you can expect one thread for the server, and several others for request processing (typically as many as the number of CPU cores). Servlet containers, however, may start with more threads (e.g. 10 on Tomcat), in support of both servlet, blocking I/O and servlet 3.1, non-blocking I/O usage.
+- The reactive `WebClient` operates in event loop style. So you’ll see a small, fixed number of processing threads related to that, e.g. "reactor-http-nio-" with the Reactor Netty connector. However if Reactor Netty is used for both client and server, the two will share event loop resources by default.
+- Reactor and RxJava provide thread pool abstractions, called Schedulers, to use with the `publishOn` operator that is used to switch processing to a different thread pool. The schedulers have names that suggest a specific concurrency strategy, e.g. "parallel" for CPU-bound work with a limited number of threads, or "elastic" for I/O-bound work with a large number of threads. If you see such threads it means some code is using a specific thread pool `Scheduler`strategy.
+- Data access libraries and other 3rd party dependencies may also create and use threads of their own.
+
+
 ## WebClient
 
 
