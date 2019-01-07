@@ -199,3 +199,33 @@ mongodb使用默认配置
 `http://localhost:8080/test`
 
 `http://localhost:8080/users`
+
+
+
+**Filter**
+
+
+
+学习顺序：lambda及stream
+
+
+
+# JDK 8 Stream
+
+参考链接：
+
+[Java 8 中的 Streams API 详解](https://www.ibm.com/developerworks/cn/java/j-lo-java8streamapi/)
+
+stream提供串行、并行两种模式。
+
+并行可以利用多核
+
+使用流可使逻辑更清晰，代码逻辑更易读
+
+Stream像高级版本的iterator
+
+
+
+## 流的使用详解
+
+简单说，对 Stream 的使用就是实现一个 filter-map-reduce 过程，产生一个最终结果，或者导致一个副作用（side effect）
