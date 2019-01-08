@@ -224,8 +224,156 @@ stream提供串行、并行两种模式。
 
 Stream像高级版本的iterator
 
+## 串行、并行
+
+使用并行化stream可以不需额外编写多线程的相关代码。但注意并行stream会乱序。
+
+```java
+public static void main(String[] args) {
+    List<String> testList = new ArrayList<>();
+    testList.add("a");
+    testList.add("b");
+    testList.add("c");
+    testList.add("d");
+    testList.add("e");
+    // 并行
+    testList.parallelStream().forEach(u -> printThread(u));
+
+    System.out.println("==================分割线==========");
+
+    // 串行
+    testList.stream().forEach(u -> printThread(u));
+}
+
+private static void printThread(String u) {
+    System.out.println("String: " + u + " Thread: " + Thread.currentThread().getName());
+}
+```
+
+```
+// 有时候parallelStream的线程会都是main
+String: c Thread: main
+String: e Thread: main
+String: d Thread: main
+String: b Thread: main
+String: a Thread: main
+==================分割线==========
+String: a Thread: main
+String: b Thread: main
+String: c Thread: main
+String: d Thread: main
+String: e Thread: main
+
+// 第二次
+String: c Thread: main
+String: b Thread: ForkJoinPool.commonPool-worker-1
+String: e Thread: main
+String: a Thread: ForkJoinPool.commonPool-worker-1
+String: d Thread: main
+==================分割线==========
+String: a Thread: main
+String: b Thread: main
+String: c Thread: main
+String: d Thread: main
+String: e Thread: main
+```
+
+
+
+
+
+将stream分拆成两个list
+
+```java
+public void filter(List<Integer> numbers, List<Integer> oddNumbers, List<Integer> evenNumbers) {
+    Map<Boolean, List<Integer>> partitions = numbers.stream().collect(Collectors.partitioningBy(n -> (n % 2) == 0));
+    evenNumbers.addAll(partitions.get(true));
+    oddNumbers.addAll(partitions.get(false));
+}
+```
+
+
+
+两个for迭代
+
+```java
+Set<Track> tracks = 
+customers.stream()
+         .map(Customer::getTrack) // customer to track
+         .filter(Objects::nonNull) // keep non null track
+         .map(Track::getId)      // track to trackId
+         .flatMap(trackId -> tracks.stream() // collect tracks matching with trackId
+                                   .filter(t-> Long.valueOf(t.getId()).equals(trackId))
+         )
+         .collect(toSet());
+```
+
+
+
+if else
+
+```java
+animalMap.entrySet().stream()
+        .forEach(
+                pair -> {
+                    if (pair.getValue() != null) {
+                        myMap.put(pair.getKey(), pair.getValue());
+                    } else {
+                        myList.add(pair.getKey());
+                    }
+                }
+        );
+        
+ // Map.forEach       
+ animalMap.forEach(
+            (key, value) -> {
+                if (value != null) {
+                    myMap.put(key, value);
+                } else {
+                    myList.add(key);
+                }
+            }
+    );
+```
+
+
+
+
+
+**groupingBy/partitioningBy**
+
+清单 25. 按照年龄归组
+
+```
+`Map<``Integer``, List<Person>> personGroups = Stream.generate(new PersonSupplier()).`` ``limit(100).`` ``collect(Collectors.groupingBy(Person::getAge));``Iterator it = personGroups.entrySet().iterator();``while (it.hasNext()) {`` ``Map.Entry<``Integer``, List<Person>> persons = (Map.Entry) it.next();`` ``System.out.println("Age " + persons.getKey() + " = " + persons.getValue().size());``}`
+```
+
+上面的 code，首先生成 100 人的信息，然后按照年龄归组，相同年龄的人放到同一个 list 中，可以看到如下的输出：
+
+```
+`Age 0 = 2``Age 1 = 2``Age 5 = 2``Age 8 = 1``Age 9 = 1``Age 11 = 2``……`
+```
+
+清单 26. 按照未成年人和成年人归组
+
+```
+`Map<``Boolean``, List<Person>> children = Stream.generate(new PersonSupplier()).`` ``limit(100).`` ``collect(Collectors.partitioningBy(p -> p.getAge() < 18));``System.out.println("Children number: " + children.get(true).size());``System.out.println("Adult number: " + children.get(false).size());`
+```
+
+输出结果：
+
+```
+`Children number: 23 ``Adult number: 77`
+```
+
+**Predicate**
+
+
 
 
 ## 流的使用详解
 
 简单说，对 Stream 的使用就是实现一个 filter-map-reduce 过程，产生一个最终结果，或者导致一个副作用（side effect）
+
+
+
