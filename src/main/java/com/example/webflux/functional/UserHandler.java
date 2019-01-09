@@ -14,8 +14,13 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Component
 public class UserHandler {
@@ -86,6 +91,59 @@ public class UserHandler {
         }
         logger.info("sleep返回");
         return user1;
+    }
+
+    public static void main(String[] args) {
+        long start = System.currentTimeMillis();
+//        IntStream.rangeClosed(1, 1000000).parallel().forEach(u -> printThread(u + ""));
+        List<Integer> list = new ArrayList<>();
+        for (int i=1; i< 1000000; i++) {
+            list.add(i);
+        }
+
+//        list.stream().forEach(i -> printThread(i));
+        list.parallelStream().forEach(i -> printThread(i));
+
+        long end = System.currentTimeMillis();
+
+        System.out.println(end - start);
+
+
+//        /**获取单词，并且去重**/
+//        List<String> list = Arrays.asList("hello welcome", "world hello", "hello world",
+//                "hello world welcome");
+//
+//        //map和flatmap的区别
+//        list.stream().map(item -> Arrays.stream(item.split(" "))).distinct().collect(Collectors.toList()).forEach(System.out::println);
+//        System.out.println("---------- ");
+//        list.stream().flatMap(item -> Arrays.stream(item.split(" "))).distinct().collect(Collectors.toList()).forEach(System.out::println);
+//
+//        //实际上返回的类似是不同的
+//        List<Stream<String>> listResult = list.stream().map(item -> Arrays.stream(item.split(" "))).distinct().collect(Collectors.toList());
+//        List<String> listResult2 = list.stream().flatMap(item -> Arrays.stream(item.split(" "))).distinct().collect(Collectors.toList());
+//
+//        System.out.println("---------- ");
+//
+//        //也可以这样
+//        list.stream().map(item -> item.split(" ")).flatMap(Arrays::stream).distinct().collect(Collectors.toList()).forEach(System.out::println);
+//
+//        System.out.println("================================================");
+//
+//        /**相互组合**/
+//        List<String> list2 = Arrays.asList("hello", "hi", "你好");
+//        List<String> list3 = Arrays.asList("zhangsan", "lisi", "wangwu", "zhaoliu");
+//
+//        list2.stream().map(item -> list3.stream().map(item2 -> item + " " + item2)).collect(Collectors.toList()).forEach(System.out::println);
+//        list2.stream().flatMap(item -> list3.stream().map(item2 -> item + " " + item2)).collect(Collectors.toList()).forEach(System.out::println);
+//
+//        //实际上返回的类似是不同的
+//        List<Stream<String>> list2Result = list2.stream().map(item -> list3.stream().map(item2 -> item + " " + item2)).collect(Collectors.toList());
+//        List<String> list2Result2 = list2.stream().flatMap(item -> list3.stream().map(item2 -> item + " " + item2)).collect(Collectors.toList());
+    }
+
+    private static void printThread(Integer u) {
+        UUID uuid = UUID.randomUUID();
+//        System.out.println("String: " + u + " Thread: " + Thread.currentThread().getName());
     }
 
 }

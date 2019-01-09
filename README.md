@@ -251,7 +251,7 @@ private static void printThread(String u) {
 ```
 
 ```
-// 有时候parallelStream的线程会都是main
+// 这个方法没有性能要求，所以有时候parallelStream的线程会都是main
 String: c Thread: main
 String: e Thread: main
 String: d Thread: main
@@ -278,7 +278,11 @@ String: d Thread: main
 String: e Thread: main
 ```
 
+关于性能：
 
+共享线程池
+
+[Java 8's streams: why parallel stream is slower?](https://stackoverflow.com/questions/23170832/java-8s-streams-why-parallel-stream-is-slower)
 
 
 
