@@ -21,6 +21,12 @@ list.stream().forEach(System.out::println);
 
 
 
+# 已有Stream
+
++ IntegerStream
++ LongStream
++ DoubleStream
+
 # 惰性
 
 
